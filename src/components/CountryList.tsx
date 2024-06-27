@@ -25,8 +25,10 @@ const CountryList: React.FC = () => {
       }
     }
     fetchCountryData();
-    console.log(countries);
   }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   const handleSelectCountry = (country: Country): void => {
     if (
@@ -44,14 +46,18 @@ const CountryList: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+  const sortedselected = selectedCountries.sort((a, b) => {
+    if (a.name.common < b.name.common) return -1;
+    if (a.name.common > b.name.common) return 1;
+    return 0;
+  });
 
-  const nonSelectedCountries = countries.filter(
+  const sorted = countries.sort((a, b) => {
+    if (a.name.common < b.name.common) return -1;
+    if (a.name.common > b.name.common) return 1;
+    return 0;
+  });
+  const nonSelectedCountries = sorted.filter(
     (country: Country) =>
       !selectedCountries.find((c) => c.cca2 === country.cca2)
   );
@@ -59,9 +65,9 @@ const CountryList: React.FC = () => {
   return (
     <>
       <div className="w-full flex flex-col justify-center items-center bg-[#EBF7FF]">
-        <h1 className="text-3xl font-semibold">선택된 목록</h1>
+        <h1 className="text-3xl font-semibold">Favorite Country</h1>
         <ul className="flex flex-wrap">
-          {selectedCountries.map((country: Country) => (
+          {sortedselected.map((country: Country) => (
             <li key={country.cca2}>
               <CountryCard
                 country={country}
@@ -71,7 +77,7 @@ const CountryList: React.FC = () => {
             </li>
           ))}
         </ul>
-        <h1 className="text-3xl font-semibold">나라 목록</h1>
+        <h1 className="text-3xl font-semibold">Country</h1>
         <ul className="flex flex-wrap">
           {nonSelectedCountries.map((country: Country) => (
             <li key={country.cca2}>

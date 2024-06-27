@@ -12,3 +12,13 @@ export async function getCountries(): Promise<Country[]> {
     throw error;
   }
 }
+
+// export const getCountries = async (): Promise<Country[]> => {
+//   try{
+//     const {data } = await axios.get<Country[]>(API_URL)
+//     return data
+//   } catch(error){
+//     console.error("fetching 에러 발생!: ", error);
+//     throw error;
+//   }
+// }
