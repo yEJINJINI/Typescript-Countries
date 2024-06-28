@@ -1,5 +1,5 @@
 import { TiHeart, TiHeartOutline } from "react-icons/ti";
-import supabase from "../supabase/SupabaseClient";
+import supabaseStore from "../api/ApiSupabase";
 import { Country, Props } from "../types/types";
 
 const CountryCard = ({
@@ -14,50 +14,48 @@ const CountryCard = ({
     capital,
   } = country;
 
-  const insertCountry = async () => {
-    handleSelectCountry(country);
-    const { data, error } = await supabase
-      .from("country")
-      .insert({ cca2, png, common, capital });
-
-    if (error) {
-      console.error(error.message);
+  const countryInsert = async () => {
+    try {
+      handleSelectCountry(country);
+      const data = await supabaseStore.insertCountry({
+        cca2,
+        png,
+        common,
+        capital,
+      });
+      alert("저장 완료!");
+      return data;
+    } catch (error) {
       alert(`오류가 발생했습니다.`);
-    } else {
-      alert("저장 되었습니다");
+      console.error(error);
     }
-    return data;
   };
 
-  const deleteCountry = async () => {
-    handleSelectCountry(country);
-    const { error } = await supabase
-      .from("country")
-      .delete()
-      .eq("cca2", country.cca2);
-
-    if (error) {
-      console.error(error.message);
+  const selectedDelete = async () => {
+    try {
+      handleSelectCountry(country);
+      await supabaseStore.deleteCountry(country);
+      alert("삭제 완료!");
+    } catch (error) {
       alert(`오류가 발생했습니다.`);
-    } else {
-      alert("삭제 되었습니다");
+      console.error(error);
     }
   };
 
   return (
-    <form
+    <div
       className="flex flex-col justify-center items-center
             w-64 h-56 m-4 p-4 rounded-md bg-white shadow-md 
             border-solid border-2 border-black "
     >
       <div className="flex justify-end w-full">
-        <button type="submit">
+        <button>
           {selectedCountries.find(
             (selectedCountry: Country) => selectedCountry.cca2 === country.cca2
           ) ? (
-            <TiHeart className="w-7 h-7" onClick={deleteCountry} />
+            <TiHeart className="w-7 h-7" onClick={selectedDelete} />
           ) : (
-            <TiHeartOutline className="w-7 h-7" onClick={insertCountry} />
+            <TiHeartOutline className="w-7 h-7" onClick={countryInsert} />
           )}
         </button>
       </div>
@@ -69,7 +67,7 @@ const CountryCard = ({
       />
       <p>나라 : {country.name.common}</p>
       <p>수도 : {country.capital}</p>
-    </form>
+    </div>
   );
 };
 

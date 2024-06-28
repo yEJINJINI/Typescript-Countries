@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getCountries } from "../api/CountryApi";
+import { getCountries } from "../api/ApiCountry";
 import { Country } from "../types/types";
 import CountryCard from "./CountryCard";
 
